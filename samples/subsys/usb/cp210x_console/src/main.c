@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2025 Sergey Matsievskiy
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/kernel.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/drivers/uart.h>
+
+BUILD_ASSERT(DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_console), zephyr_cp210x_uart),
+	     "Console device is not CP210X UART device");
+
+int main(void)
+{
+	const struct device *const dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
+	uint32_t dtr = 0;
+
+	/* Poll if the DTR flag was set */
+	while (!dtr) {
+		uart_line_ctrl_get(dev, UART_LINE_CTRL_DTR, &dtr);
+		/* Give CPU resources to low priority threads. */
+		k_sleep(K_MSEC(100));
+	}
+
+	while (1) {
+		printk("Hello World! %s\n", CONFIG_ARCH);
+		k_sleep(K_SECONDS(1));
+	}
+}
