@@ -118,3 +118,5 @@ TextEncoding.txt
 YAMLLint.txt
 ZephyrModuleFile.txt
 # zephyr-keep-sorted-stop
+/.ccls-cache/
+compile_commands.json
